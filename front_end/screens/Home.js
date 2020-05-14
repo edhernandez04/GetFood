@@ -10,7 +10,28 @@ export default class Home extends React.Component {
     state = {
         searchResults: [],
         recentOrders: [],
-        suggestedPlaces: []
+        suggestedPlaces: [],
+        zipCode: ''
+    }
+
+	findCoordinates = () => {
+		navigator.geolocation.getCurrentPosition(
+			position => {
+                let lat = parseFloat(JSON.stringify(position.coords.latitude))
+                let lng = parseFloat(JSON.stringify(position.coords.longitude))
+                console.log(lat, lng)
+                console.log(position)
+			},
+			error => Alert.alert(error.message),
+			{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+		);
+	};
+
+    componentDidMount() {
+        this.findCoordinates();
+        fetch(`https://api.yelp.com/v3/businesses/matches/${this.state.zipCode}`)
+            .then(resp => resp.json())
+            .then(searchResults => this.setState({searchResults}))
     }
 
     render(){
@@ -26,26 +47,8 @@ export default class Home extends React.Component {
             </View>
 
             <View>
-                <Card>
-                    <Image style={styles.recentRest} source={{uri: 'https://www.ahstatic.com/photos/1146_rsr003_00_p_1024x768.jpg'}}/>
-                    <View style={styles.restInfo}>
-                        <Text>$$$</Text>
-                        <Text>Restaurant 1</Text>
-                        <Text>+ + + +</Text>
-                    </View>
-                </Card>
             </View>
 
-            <View>
-                <Card>
-                    <Image style={styles.suggestedRest} source={{uri: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80'}}/>
-                    <View style={styles.restInfo}>
-                        <Text>$</Text>
-                        <Text>Restaurant 2</Text>
-                        <Text>+ + +</Text>
-                    </View>
-                </Card>
-            </View>
         </View>
         )
     }
