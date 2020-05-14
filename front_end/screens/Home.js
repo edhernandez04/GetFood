@@ -11,30 +11,36 @@ export default class Home extends React.Component {
         searchResults: [],
         recentOrders: [],
         suggestedPlaces: [],
-        zipCode: ''
+        locations: [],
+        currLatitude: 0,
+        currLongitude: 0
     }
 
 	findCoordinates = () => {
 		navigator.geolocation.getCurrentPosition(
 			position => {
-                let lat = parseFloat(JSON.stringify(position.coords.latitude))
-                let lng = parseFloat(JSON.stringify(position.coords.longitude))
-                console.log(lat, lng)
-                console.log(position)
+                this.setState({currLatitude: parseFloat(JSON.stringify(position.coords.latitude))})
+                this.setState({currLongitude: parseFloat(JSON.stringify(position.coords.longitude))})
 			},
 			error => Alert.alert(error.message),
 			{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
 		);
-	};
+    };
+
+    zipCodeFetch = () => {
+            fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.currLongitude},${this.state.currLatitude}&key=AIzaSyCiZESTsWLPZXB4A9giVO_F4Lz0dJB2OKM`)
+                .then(resp => resp.json())
+                .then(locations => console.log(locations))
+    }
 
     componentDidMount() {
         this.findCoordinates();
-        fetch(`https://api.yelp.com/v3/businesses/matches/${this.state.zipCode}`)
-            .then(resp => resp.json())
-            .then(searchResults => this.setState({searchResults}))
     }
 
     render(){
+        if (this.state.currLatitude != 0 && this.state.currLongitude != 0){
+            this.zipCodeFetch()
+        }
         return(
         <View>
 
