@@ -9,11 +9,9 @@ export default class Home extends React.Component {
 
     state = {
         searchResults: [],
-        recentOrders: [],
-        suggestedPlaces: [],
-        locations: [],
         currLatitude: 0,
-        currLongitude: 0
+        currLongitude: 0,
+        zipCode: 0
     }
 
 	findCoordinates = () => {
@@ -23,24 +21,30 @@ export default class Home extends React.Component {
                 this.setState({currLongitude: parseFloat(JSON.stringify(position.coords.longitude))})
 			},
 			error => Alert.alert(error.message),
-			{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-		);
-    };
+			{ enableHighAccuracy: true }
+        )
+    }
 
     zipCodeFetch = () => {
-            fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.currLongitude},${this.state.currLatitude}&key=AIzaSyCiZESTsWLPZXB4A9giVO_F4Lz0dJB2OKM`)
-                .then(resp => resp.json())
-                .then(locations => console.log(locations))
+        fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.currLatitude},${this.state.currLongitude}&key=AIzaSyCiZESTsWLPZXB4A9giVO_F4Lz0dJB2OKM`)
+            .then(resp => resp.json())
+            .then(locations => this.setState({zipCode: parseInt(locations.results[0].address_components[7].long_name)}))
+    }
+
+    businessSearchFetch = () => {
+        fetch(`https://api.yelp.com/v3/businesses/search?limit=10&location=${this.state.zipCode}`)
+            .then(resp => resp.json())
+            .then(searchResults => this.setState({searchResults}))
     }
 
     componentDidMount() {
-        this.findCoordinates();
+        this.findCoordinates()
     }
 
+    // if (this.state.currLatitude != 0 && this.state.currLongitude != 0) this.zipCodeFetch() 
+
     render(){
-        if (this.state.currLatitude != 0 && this.state.currLongitude != 0){
-            this.zipCodeFetch()
-        }
+        console.log(this.state)
         return(
         <View>
 
@@ -53,6 +57,7 @@ export default class Home extends React.Component {
             </View>
 
             <View>
+                <Card results={this.state.searchResults}/>
             </View>
 
         </View>
