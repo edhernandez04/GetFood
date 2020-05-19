@@ -1,30 +1,33 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
-import { Actions } from 'react-native-router-flux';
 import Card from '../shared/card.js'
 import FoodTile from '../shared/foodTiles.js'
 import SearchBar from '../shared/searchBar.js'
+import Fetch from '../shared/fetches.js'
 
 export default class Home extends React.Component {
 
     state = {
         searchResults: [],
-        currLatitude: 0,
-        currLongitude: 0,
+        currLatitude: null,
+        currLongitude: null,
         zipCode: 0
     }
 
-	findCoordinates = () => {
-		navigator.geolocation.getCurrentPosition(
-			position => {
-                this.setState({currLatitude: parseFloat(JSON.stringify(position.coords.latitude))})
-                this.setState({currLongitude: parseFloat(JSON.stringify(position.coords.longitude))})
-			},
-			error => Alert.alert(error.message),
-			{ enableHighAccuracy: true }
-        )
+    componentDidMount() {
+        this.findCoordinates()
     }
 
+    findCoordinates = () => {
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                this.setState({currLatitude: parseFloat(JSON.stringify(position.coords.latitude)), currLongitude: parseFloat(JSON.stringify(position.coords.longitude))})
+            },
+            error => Alert.alert(error.message),
+            { enableHighAccuracy: true }
+        )
+    }
+    
     zipCodeFetch = () => {
         fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.currLatitude},${this.state.currLongitude}&key=AIzaSyCiZESTsWLPZXB4A9giVO_F4Lz0dJB2OKM`)
             .then(resp => resp.json())
@@ -32,18 +35,13 @@ export default class Home extends React.Component {
     }
 
     businessSearchFetch = () => {
-        fetch(`https://api.yelp.com/v3/businesses/search?limit=10&location=${this.state.zipCode}`)
+        fetch(`https://api.yelp.com/v3/businesses/search?limit=10&location=${this.state.searchResults}`)
             .then(resp => resp.json())
-            .then(searchResults => this.setState({searchResults}))
+            .then(searchResults => console.log(searchResults))
     }
-
-    componentDidMount() {
-        this.findCoordinates()
-    }
-
-    // if (this.state.currLatitude != 0 && this.state.currLongitude != 0) this.zipCodeFetch() 
-
+    
     render(){
+        if ((this.state.currLatitude && this.state.currLongitude) && !this.state.zipCode) this.zipCodeFetch() 
         console.log(this.state)
         return(
         <View>
@@ -53,7 +51,7 @@ export default class Home extends React.Component {
             </View>
 
             <View>
-                <SearchBar />
+                <SearchBar search={this.search}/>
             </View>
 
             <View>
