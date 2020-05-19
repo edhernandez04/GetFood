@@ -1,9 +1,8 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View} from 'react-native';
 import Card from '../shared/card.js'
 import FoodTile from '../shared/foodTiles.js'
 import SearchBar from '../shared/searchBar.js'
-import Fetch from '../shared/fetches.js'
 
 export default class Home extends React.Component {
 
@@ -33,32 +32,27 @@ export default class Home extends React.Component {
             .then(resp => resp.json())
             .then(locations => this.setState({zipCode: parseInt(locations.results[0].address_components[7].long_name)}))
     }
-
-    businessSearchFetch = () => {
-        fetch(`https://api.yelp.com/v3/businesses/search?limit=10&location=${this.state.searchResults}`)
-            .then(resp => resp.json())
-            .then(searchResults => console.log(searchResults))
-    }
     
     render(){
         if ((this.state.currLatitude && this.state.currLongitude) && !this.state.zipCode) this.zipCodeFetch() 
-        console.log(this.state)
         return(
-        <View>
-
-            <View style={styles.restCategory}>
-                <FoodTile />
-            </View>
-
             <View>
-                <SearchBar search={this.search}/>
-            </View>
 
-            <View>
-                <Card results={this.state.searchResults}/>
-            </View>
+                <View style={styles.restCategory}>
+                    <FoodTile />
+                </View>
 
-        </View>
+                <View>
+                    <SearchBar
+                        latitude={this.state.currLatitude} 
+                        longitude={this.state.currLongitude}/>
+                </View>
+
+                <View>
+                    <Card results={this.state.searchResults}/>
+                </View>
+
+            </View>
         )
     }
 }
