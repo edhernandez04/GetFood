@@ -1,26 +1,46 @@
-import React from 'react';
-import { AppRegistry} from 'react-native';
-import { Router, Scene, Stack } from 'react-native-router-flux';
-import Home from './screens/Home'
-import Login from './screens/Login'
-import Register from './screens/Register'
+import React, { Component } from 'react';
+import { AppRegistry } from 'react-native';
+import { createStore } from 'redux'
+import Provider from 'react-redux'
+import Home from './screens/Home.js'
 
-export default class App extends React.Component {
+const initialState = {
+  currLatitude: null,
+  currLongitude: null,
+  zipCode: 0,
+  searchParams: '',
+  bizResults: []
+}
 
-  render(){
-    return(
-      <Router>
+const reducer = (state = initialState, action) => {
+  switch(action.type){
+    case 'findCoordinates' :
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          this.setState({currLatitude: parseFloat(JSON.stringify(position.coords.latitude)), currLongitude: parseFloat(JSON.stringify(position.coords.longitude))})
+        }, error => Alert.alert(error.message), { enableHighAccuracy: true }
+      ) 
+    case 'findZipCode' :
+      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.currLatitude},${this.state.currLongitude}&key=AIzaSyCiZESTsWLPZXB4A9giVO_F4Lz0dJB2OKM`)
+        .then(resp => resp.json())
+          .then(locations => this.setState({zipCode: parseInt(locations.results[0].address_components[7].long_name)}))
+    default:
+      return state
+  }
+}
 
-        <Stack key="root">
-          <Scene key="login" component={Login} title="Login" />
-          <Scene key="register" component={Register} title="Register" />
-          <Scene key="home" component={Home} title="GetFood" initial={true} />
-        </Stack>
+const store = createStore( reducer )
 
-      </Router>
+class App extends Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <Home />
+      </Provider>
     )
   }
+}
 
-};
+export default App
 
 AppRegistry.registerComponent('App', () => App)

@@ -1,61 +1,48 @@
 import React from 'react'
 import { StyleSheet, View} from 'react-native';
+import { connect } from 'react-redux'
 import Card from '../shared/card.js'
 import FoodTile from '../shared/foodTiles.js'
 import SearchBar from '../shared/searchBar.js'
 
-export default class Home extends React.Component {
+class Home extends React.Component {
 
-    state = {
-        searchResults: [],
-        currLatitude: null,
-        currLongitude: null,
-        zipCode: 0
-    }
-
-    componentDidMount() {
-        this.findCoordinates()
-    }
-
-    findCoordinates = () => {
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                this.setState({currLatitude: parseFloat(JSON.stringify(position.coords.latitude)), currLongitude: parseFloat(JSON.stringify(position.coords.longitude))})
-            },
-            error => Alert.alert(error.message),
-            { enableHighAccuracy: true }
-        )
-    }
-    
-    zipCodeFetch = () => {
-        fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.currLatitude},${this.state.currLongitude}&key=AIzaSyCiZESTsWLPZXB4A9giVO_F4Lz0dJB2OKM`)
-            .then(resp => resp.json())
-            .then(locations => this.setState({zipCode: parseInt(locations.results[0].address_components[7].long_name)}))
-    }
-    
     render(){
-        if ((this.state.currLatitude && this.state.currLongitude) && !this.state.zipCode) this.zipCodeFetch() 
+        if ((this.props.currLatitude && this.props.currLongitude) && !this.props.zipCode) this.props.zipCodeFetch() 
         return(
             <View>
-
                 <View style={styles.restCategory}>
                     <FoodTile />
                 </View>
-
                 <View>
                     <SearchBar
-                        latitude={this.state.currLatitude} 
-                        longitude={this.state.currLongitude}/>
+                        latitude={this.props.currLatitude} 
+                        longitude={this.props.currLongitude}/>
                 </View>
-
                 <View>
-                    <Card results={this.state.searchResults}/>
+                    <Card />
                 </View>
-
             </View>
         )
     }
 }
+
+mapStateToProps = (state) => {
+    return {
+        currLatitude: state.currLatitude,
+        currLongitude: state.currLongitude,
+        zipCode: state.zipCode
+    }
+  }
+  
+  mapDispatchToProps = (dispatch) => {
+    return {
+        findCoordinates : () => dispatch({type: 'findCoordinates'}),
+        findZipCode : () => dispatch({type : findZipCode})
+    }
+  }
+
+export default connect(mapStateToProps)(Home)
 
 const styles = StyleSheet.create({
     restCategory: {

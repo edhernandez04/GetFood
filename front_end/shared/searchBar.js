@@ -24,7 +24,11 @@ export default class SearchBar extends React.Component{
 
     fetchBusinessResults = () => {
         axios.get('https://api.yelp.com/v3/businesses/search', this.config)
-        .then(bizResults => this.setState({bizResults}))
+        .then(bizResults => this.setState({bizResults:bizResults.data.businesses}))
+    }
+
+    resultHandler = () => {
+        this.props.searchResults(this.state.bizResults)
     }
 
     handleChange = (text) => {
@@ -32,7 +36,6 @@ export default class SearchBar extends React.Component{
     }
    
    render(){
-       console.log(this.state.bizResults)
     return (
         <View style = {styles.container}>
             <TextInput style = {styles.input}
