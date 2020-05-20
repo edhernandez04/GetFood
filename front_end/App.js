@@ -20,10 +20,12 @@ const reducer = (state = initialState, action) => {
           this.setState({currLatitude: parseFloat(JSON.stringify(position.coords.latitude)), currLongitude: parseFloat(JSON.stringify(position.coords.longitude))})
         }, error => Alert.alert(error.message), { enableHighAccuracy: true }
       ) 
+      break
     case 'findZipCode' :
       fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.currLatitude},${this.state.currLongitude}&key=AIzaSyCiZESTsWLPZXB4A9giVO_F4Lz0dJB2OKM`)
         .then(resp => resp.json())
           .then(locations => this.setState({zipCode: parseInt(locations.results[0].address_components[7].long_name)}))
+      break
     default:
       return state
   }
@@ -40,7 +42,6 @@ class App extends Component {
     )
   }
 }
-
 export default App
 
 AppRegistry.registerComponent('App', () => App)

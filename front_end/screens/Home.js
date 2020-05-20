@@ -38,7 +38,7 @@ mapStateToProps = (state) => {
   mapDispatchToProps = (dispatch) => {
     return {
         findCoordinates : () => dispatch({type: 'findCoordinates'}),
-        findZipCode : () => dispatch({type : findZipCode})
+        findZipCode : () => dispatch({type : 'findZipCode'})
     }
   }
 
