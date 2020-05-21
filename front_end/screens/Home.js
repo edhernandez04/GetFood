@@ -1,6 +1,5 @@
 import React from 'react'
 import { StyleSheet, View} from 'react-native';
-import { connect } from 'react-redux'
 import Card from '../shared/card.js'
 import FoodTile from '../shared/foodTiles.js'
 import SearchBar from '../shared/searchBar.js'
@@ -8,41 +7,28 @@ import SearchBar from '../shared/searchBar.js'
 class Home extends React.Component {
 
     render(){
-        if ((this.props.currLatitude && this.props.currLongitude) && !this.props.zipCode) this.props.zipCodeFetch() 
+        if ((this.props.currLatitude && this.props.currLongitude) && !this.props.zipCode) mapDispatchToProps(findZipCode) 
         return(
-            <View>
-                <View style={styles.restCategory}>
-                    <FoodTile />
-                </View>
+            <Provider store={store}>
                 <View>
-                    <SearchBar
-                        latitude={this.props.currLatitude} 
-                        longitude={this.props.currLongitude}/>
+                    <View style={styles.restCategory}>
+                        <FoodTile />
+                    </View>
+                    <View>
+                        <SearchBar
+                            latitude={this.props.currLatitude} 
+                            longitude={this.props.currLongitude}/>
+                    </View>
+                    <View>
+                        <Card />
+                    </View>
                 </View>
-                <View>
-                    <Card />
-                </View>
-            </View>
+            </Provider>
         )
     }
 }
 
-mapStateToProps = (state) => {
-    return {
-        currLatitude: state.currLatitude,
-        currLongitude: state.currLongitude,
-        zipCode: state.zipCode
-    }
-  }
-  
-  mapDispatchToProps = (dispatch) => {
-    return {
-        findCoordinates : () => dispatch({type: 'findCoordinates'}),
-        findZipCode : () => dispatch({type : 'findZipCode'})
-    }
-  }
-
-export default connect(mapStateToProps)(Home)
+export default Home
 
 const styles = StyleSheet.create({
     restCategory: {

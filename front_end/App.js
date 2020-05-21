@@ -1,47 +1,40 @@
-import React, { Component } from 'react';
-import { AppRegistry } from 'react-native';
+import React from 'react';
+import Provider, { connect } from 'react-redux'
 import { createStore } from 'redux'
-import Provider from 'react-redux'
-import Home from './screens/Home.js'
+import { registerRootComponent } from 'expo'
+import Routes from './shared/routes.js'
+import reducer from './shared/reducer.js'
 
-const initialState = {
-  currLatitude: null,
-  currLongitude: null,
-  zipCode: 0,
-  searchParams: '',
-  bizResults: []
-}
+class App extends React.Component {
 
-const reducer = (state = initialState, action) => {
-  switch(action.type){
-    case 'findCoordinates' :
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          this.setState({currLatitude: parseFloat(JSON.stringify(position.coords.latitude)), currLongitude: parseFloat(JSON.stringify(position.coords.longitude))})
-        }, error => Alert.alert(error.message), { enableHighAccuracy: true }
-      ) 
-      break
-    case 'findZipCode' :
-      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.currLatitude},${this.state.currLongitude}&key=AIzaSyCiZESTsWLPZXB4A9giVO_F4Lz0dJB2OKM`)
-        .then(resp => resp.json())
-          .then(locations => this.setState({zipCode: parseInt(locations.results[0].address_components[7].long_name)}))
-      break
-    default:
-      return state
+  render() {
+    return (
+      <Provider store={store}>
+        <Routes />
+      </Provider>
+    )
   }
+
 }
 
 const store = createStore( reducer )
 
-class App extends Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <Home />
-      </Provider>
-    )
+mapStateToProps = (state) => {
+  return {
+    currLatitude: state.currLatitude,
+    currLongitude: state.currLongitude,
+    zipCode: state.zipCode,
+    searchParams: state.searchParams,
+    bizResults: state.bizResults
   }
 }
-export default App
 
-AppRegistry.registerComponent('App', () => App)
+mapDispatchToProps = (dispatch) => {
+  return { 
+      findCoordinates : () => dispatch({type: 'findCoordinates'}),
+      findZipCode : () => dispatch({type : 'findZipCode'})
+  }
+}
+
+export default connect(mapStateToProps)(App)
+registerRootComponent(App);
