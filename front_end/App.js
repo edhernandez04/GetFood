@@ -4,6 +4,7 @@ import { createStore } from 'redux'
 import { registerRootComponent } from 'expo'
 import Routes from './shared/routes.js'
 import reducer from './shared/reducer.js'
+import { findLatitude, findLongitude, findZipCode } from './shared/actions.js'
 
 class App extends React.Component {
 
@@ -29,12 +30,11 @@ mapStateToProps = (state) => {
   }
 }
 
-mapDispatchToProps = (dispatch) => {
-  return { 
-      findCoordinates : () => dispatch({type: 'findCoordinates'}),
-      findZipCode : () => dispatch({type : 'findZipCode'})
-  }
+mapDispatchToProps = {
+  findLatitude,
+  findLongitude,
+  findZipCode
 }
 
-export default connect(mapStateToProps)(App)
+export default connect(mapStateToProps, mapDispatchToProps)(App)
 registerRootComponent(App);
