@@ -5,7 +5,6 @@ import Login from '../screens/Login'
 import Register from '../screens/Register'
 
 const Routes = (props) => (
-  <Provider store={store}>
     <Router>
 
       <Stack key="root">
@@ -15,7 +14,6 @@ const Routes = (props) => (
       </Stack>
 
     </Router>
-  </Provider>
 )
 
 export default Routes

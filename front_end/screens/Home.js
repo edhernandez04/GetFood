@@ -9,7 +9,6 @@ class Home extends React.Component {
     render(){
         if ((this.props.currLatitude && this.props.currLongitude) && !this.props.zipCode) mapDispatchToProps(findZipCode) 
         return(
-            <Provider store={store}>
                 <View>
                     <View style={styles.restCategory}>
                         <FoodTile />
@@ -23,7 +22,6 @@ class Home extends React.Component {
                         <Card />
                     </View>
                 </View>
-            </Provider>
         )
     }
 }
