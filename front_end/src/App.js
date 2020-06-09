@@ -1,5 +1,5 @@
 import React from 'react';
-// import { connect } from 'react-redux'
+import { connect } from 'react-redux'
 import Routes from '../shared/routes.js'
 import { findLatitude, findLongitude, findZipCode } from '../shared/actions.js'
 
@@ -13,7 +13,7 @@ class App extends React.Component {
 
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     currLatitude: state.currLatitude,
     currLongitude: state.currLongitude,
@@ -23,10 +23,12 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = (state) => {
-  findLatitude(),
-  findLongitude(),
-  findZipCode()
+const mapDispatchToProps = dispatch => {
+  return {
+    findLatitude: () => { dispatch(findLatitude()) },
+    findLongitude: () => { dispatch(findLongitude()) },
+    findZipCode: () => { dipatch(findZipCode()) }
+  }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
