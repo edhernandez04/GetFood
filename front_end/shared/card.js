@@ -1,12 +1,16 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text, Image } from 'react-native';
 
-export default function Card(props){
-
+export default Card = props => {
     return (
         <View style={styles.card} >
             <View style={styles.cardContent} >
-                { props.children }
+                <Image source={{uri: props.business.image_url}} style={styles.picture}/>
+                <Text>{props.business.name}</Text>
+                <Text>{props.business.phone}</Text>
+                <Text>{props.business.price}</Text>
+                <Text>{props.business.rating}</Text>
+                <Text>{props.business.is_closed}</Text>
             </View>
         </View>
     )
@@ -24,5 +28,11 @@ const styles = StyleSheet.create({
     },
     cardContent: {
         padding: 10
+    },
+    picture: {
+        width: 440,
+        height: 200,
+        borderRadius: 5,
+        justifyContent: 'space-around'
     }
 })

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, TextInput } from 'react-native';
+import { StyleSheet, View, TextInput, ScrollView } from 'react-native';
 import Card from '../shared/card.js'
 import FoodTile from '../shared/foodTiles.js'
 import axios from 'axios'
@@ -46,7 +46,7 @@ class Home extends React.Component {
         },
         params: {
             term: this.state.searchParams, 
-            radius: 4025, 
+            radius: 400, 
             latitude: this.state.location.currLatitude, 
             longitude: this.state.location.currLongitude, 
             sort_by: "distance"
@@ -54,8 +54,9 @@ class Home extends React.Component {
     }
 
     fetchBusinessResults = () => {
+        this.setState({bizResults: []})
         axios.get('https://api.yelp.com/v3/businesses/search', this.config)
-            .then( bizResults => this.setState({ bizResults: bizResults.data.businesses }))
+            .then( bizResults => this.setState({ bizResults: bizResults.data.businesses }) )
     }
 
     handleChange = text => {
@@ -77,7 +78,11 @@ class Home extends React.Component {
                             onSubmitEditing={this.fetchBusinessResults}/>
                     </View>
                     <View>
-                        <Card />
+                        <ScrollView>
+                        {this.state.bizResults.map( business => {
+                            return <Card key={business.id} business={business}/>
+                        })}
+                        </ScrollView>
                     </View>
                 </View>
         )
