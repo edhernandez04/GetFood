@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import Routes from '../shared/routes.js'
-import { findLatitude, findLongitude, findZipCode } from '../shared/actions.js'
 
 class App extends React.Component {
 

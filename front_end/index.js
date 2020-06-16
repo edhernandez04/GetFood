@@ -2,9 +2,9 @@ import * as React from 'react';
 import App from './src/App.js'
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
-import reduce from './shared/reducer.js'
+import rootReducer from './reducers/index.js';
 
-const store = createStore(reduce)
+const store = createStore(rootReducer)
 
 export default function Main() {
   return (

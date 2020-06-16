@@ -14,6 +14,8 @@ const reducer = (state = initialState, action) => {
             return {...state, currLongitude: action.payload}
         case 'findZipCode' :
             return {...state, zipCode: initialState.action.payload}
+        case 'bizResults' :
+            return { bizResults: action.payload }
         default:
             return initialState
     } 
