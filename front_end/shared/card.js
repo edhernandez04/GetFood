@@ -37,7 +37,9 @@ export default Card = props => {
                 </View>
                 <Image source={{uri: props.business.image_url}} style={styles.picture}/>
                 <View style={styles.bottom}>
-                    <Text>{props.business.phone}</Text>
+                    <Text>{props.business.display_phone}</Text>
+                    <Text>{props.business.location.address1}</Text>
+                    <Text>{props.business.is_closed ? 'OPEN':'CLOSED'}</Text>
                 </View>
             </View>
         </View>
