@@ -38,24 +38,25 @@ class Home extends React.Component {
         fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.location.currLatitude},${this.state.location.currLongitude}&key=AIzaSyCiZESTsWLPZXB4A9giVO_F4Lz0dJB2OKM`)
         .then(resp => resp.json())
             .then( location => this.setState({ zipCode: parseInt(location.results[0].address_components[7].long_name)}) )
-    }
-
-    config = {
-        headers: {
-            Authorization: 'Bearer vAkWYC6AXF6znx1BJu2dkzt41cKzZSUHLtzQ8bI9nif1NDiJCXO1JWoAcqqG6uELscgKna3Ho76oDHMWWiRoleTJNUMdRsh2kJRYJfHmKvHZRdQZw9angcEwVJW5XnYx',
-        },
-        params: {
-            term: this.state.searchParams, 
-            radius: 400, 
-            latitude: this.state.location.currLatitude, 
-            longitude: this.state.location.currLongitude, 
-            sort_by: "distance"
-        }
+            .then(this.fetchBusinessResults)
     }
 
     fetchBusinessResults = () => {
         this.setState({bizResults: []})
-        axios.get('https://api.yelp.com/v3/businesses/search', this.config)
+        const config = {
+            headers: {
+                Authorization: 'Bearer vAkWYC6AXF6znx1BJu2dkzt41cKzZSUHLtzQ8bI9nif1NDiJCXO1JWoAcqqG6uELscgKna3Ho76oDHMWWiRoleTJNUMdRsh2kJRYJfHmKvHZRdQZw9angcEwVJW5XnYx',
+            },
+            params: {
+                term: this.state.searchParams, 
+                radius: 4023,
+                latitude: this.state.location.currLatitude,
+                longitude: this.state.location.currLongitude,
+                categories: "Food,all",
+                limit: 12
+            }
+        }
+        axios.get('https://api.yelp.com/v3/businesses/search', config)
             .then( bizResults => this.setState({ bizResults: bizResults.data.businesses }) )
     }
 
@@ -64,7 +65,7 @@ class Home extends React.Component {
     }
 
     render(){
-        if ((this.state.location.currLatitude !== 0) && !this.state.zipCode) this.findZipCode() 
+        if ((this.state.location.currLatitude !== 0) && !this.state.zipCode) this.findZipCode()
         return(
                 <View>
                     <View style={styles.restCategory}>
