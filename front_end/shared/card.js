@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 
 export default Card = props => {
  
@@ -27,19 +27,35 @@ export default Card = props => {
         } 
     }
 
+    const displayTransaction = () => {
+        if (props.business.transactions.length === 0) {
+            return <Text> No Delivery </Text>
+        } else if (props.business.transactions.length > 0){
+            return <Image style={styles.deliveryImage} source={require('../assets/delivery.png')} />
+        }
+    }
+
     return (
         <View style={styles.card} >
             <View style={styles.cardContent} >
                 <View style={styles.top}>
-                    <Text style={styles.price}>{props.business.price}</Text>
-                    <Text>{props.business.name}</Text>
+                    <Text style={{fontWeight: 'bold'}}>{props.business.name}</Text>
                         {displayRating()}
                 </View>
                 <Image source={{uri: props.business.image_url}} style={styles.picture}/>
                 <View style={styles.bottom}>
-                    <Text>{props.business.display_phone}</Text>
-                    <Text>{props.business.location.address1}</Text>
-                    <Text>{props.business.is_closed ? 'OPEN':'CLOSED'}</Text>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText}>{props.business.location.display_address[0]}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText}>{props.business.display_phone}</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.bottomFirst}>
+                    <Text>Reviews: {props.business.review_count}</Text>
+                    <Text>{props.business.is_closed === false ? 'OPEN':'CLOSED'}</Text>
+                    <Text style={styles.price}>{props.business.price}</Text>
+                    {displayTransaction()}
                 </View>
             </View>
         </View>
@@ -56,26 +72,36 @@ const styles = StyleSheet.create({
         shadowColor: 'black',
         margin: 10
     },
-    cardContent: {
-        padding: 10
-    },
     picture: {
-        width: 440,
+        width: '100%',
         height: 200,
-        borderRadius: 5,
         justifyContent: 'space-around'
     },
     top: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 2
+        padding: 8
     },
-    bottom: {
+    bottomFirst: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingTop: 2
+        padding: 8
+    },
+    bottom: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+
+    },
+    button: {
+        backgroundColor: 'tomato',
+        padding: 8,
+        width: '50%',
+    },
+    buttonText: {
+        color: 'white',
+        textAlign: 'center'
     },
     ratingImg: {
         width: 120,
@@ -84,5 +110,9 @@ const styles = StyleSheet.create({
     price: {
         fontWeight: 'bold',
         color: 'green'
+    },
+    deliveryImage: {
+        height: 25,
+        width: 25
     }
 })

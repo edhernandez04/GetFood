@@ -52,8 +52,8 @@ class Home extends React.Component {
                 radius: 4023,
                 latitude: this.state.location.currLatitude,
                 longitude: this.state.location.currLongitude,
-                categories: "Food,all",
-                limit: 12
+                categories: "food",
+                limit: 20
             }
         }
         axios.get('https://api.yelp.com/v3/businesses/search', config)
@@ -66,6 +66,7 @@ class Home extends React.Component {
 
     render(){
         if ((this.state.location.currLatitude !== 0) && !this.state.zipCode) this.findZipCode()
+        console.log(this.state)
         return(
                 <View>
                     <View style={styles.restCategory}>
