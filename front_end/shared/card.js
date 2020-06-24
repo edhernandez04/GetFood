@@ -1,10 +1,11 @@
 import React from 'react'
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
+import { Actions } from 'react-native-router-flux';
 
 export default Card = props => {
  
     const displayRating = () => {
-        if(props.business.rating === 0){
+        if (props.business.rating === 0) {
             return  <Image style={styles.ratingImg} source={require('../assets/stars_regular_0.png')} />
         } else if (props.business.rating === 1){
             return <Image style={styles.ratingImg} source={require('../assets/stars_regular_1.png')} />
@@ -38,11 +39,13 @@ export default Card = props => {
     return (
         <View style={styles.card} >
             <View style={styles.cardContent} >
-                <View style={styles.top}>
-                    <Text style={{fontWeight: 'bold'}}>{props.business.name}</Text>
+                <TouchableOpacity onPress={() => Actions.show({...props})}>
+                    <View style={styles.top}>
+                        <Text style={{fontWeight: 'bold'}}>{props.business.name}</Text>
                         {displayRating()}
-                </View>
-                <Image source={{uri: props.business.image_url}} style={styles.picture}/>
+                    </View>
+                    <Image source={props.business.image_url ? {uri: props.business.image_url} : null} style={styles.picture}/>
+                </TouchableOpacity>
                 <View style={styles.bottom}>
                     <TouchableOpacity style={styles.button}>
                         <Text style={styles.buttonText}>{props.business.location.display_address[0]}</Text>
@@ -72,10 +75,13 @@ const styles = StyleSheet.create({
         shadowColor: 'black',
         margin: 10
     },
+    cardContent: {
+        flex: 1
+    },
     picture: {
         width: '100%',
-        height: 200,
-        justifyContent: 'space-around'
+        height: 250,
+        resizeMode: 'cover'
     },
     top: {
         flex: 1,

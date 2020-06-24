@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, View, TextInput, ScrollView, Image } from 'react-native';
 import Card from '../shared/card.js'
 import FoodTile from '../shared/foodTiles.js'
 import axios from 'axios'
@@ -64,28 +64,33 @@ class Home extends React.Component {
         this.setState({ searchParams: text })
     }
 
+    foodTilePress = async (term) => {
+        await this.setState({ searchParams: term})
+        this.fetchBusinessResults()
+    }
+
     render(){
         if ((this.state.location.currLatitude !== 0) && !this.state.zipCode) this.findZipCode()
-        console.log(this.state)
         return(
-                <View>
+                <View style={styles.parentTainer}>
                     <View style={styles.restCategory}>
-                        <FoodTile />
+                        <FoodTile foodTilePress={this.foodTilePress}/>
                     </View>
-                    <View style = {styles.container}>
-                        <TextInput
-                            placeholder = "Find Food Places"
-                            autoCapitalize = "none"
-                            onChangeText = {this.handleChange}
-                            onSubmitEditing={this.fetchBusinessResults}/>
-                    </View>
-                    <View>
-                        <ScrollView>
-                        {this.state.bizResults.map( business => {
-                            return <Card key={business.id} business={business}/>
-                        })}
-                        </ScrollView>
-                    </View>
+                    <ScrollView>
+                        <View style = {styles.container}>
+                            <Image style={styles.searchGlass} source={require('../assets/searchGlass.png')} />
+                            <TextInput
+                                placeholder = "Find Food Places"
+                                autoCapitalize = "none"
+                                onChangeText = {this.handleChange}
+                                onSubmitEditing={this.fetchBusinessResults}/>
+                        </View>
+                        <View>
+                            {this.state.bizResults.map( business => {
+                                return <Card key={business.id} business={business}/>
+                            })}
+                        </View>
+                    </ScrollView>
                 </View>
         )
     }
@@ -94,6 +99,9 @@ class Home extends React.Component {
 export default Home
 
 const styles = StyleSheet.create({
+    parentTainer: {
+        flex: 1
+    },
     restCategory: {
         flexDirection: 'row'
     },
@@ -108,6 +116,11 @@ const styles = StyleSheet.create({
         padding: 5,
         justifyContent: 'space-between'
     },
+    searchGlass: {
+        height: 25,
+        width: 25,
+        marginRight: 8
+    },
     container: {
         height: 50,
         borderRadius: 5,
@@ -116,6 +129,7 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 25, height: 25},
         shadowColor: 'black',
         margin: 10,
-        padding: 10
+        padding: 10,
+        flexDirection: 'row'
        }
 })
