@@ -13,7 +13,8 @@ class Home extends React.Component {
             currLongitude: 0
         },
         bizResults: [],
-        searchParams: ''
+        searchParams: '',
+        loading: false
     }
 
     componentDidMount(){
