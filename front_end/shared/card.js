@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, Linking } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
 export default Card = props => {
@@ -30,10 +30,19 @@ export default Card = props => {
 
     const displayTransaction = () => {
         if (props.business.transactions.length === 0) {
-            return <Text> No Delivery </Text>
+            return
         } else if (props.business.transactions.length > 0){
             return <Image style={styles.deliveryImage} source={require('../assets/delivery.png')} />
         }
+    }
+
+    const makeCall = () => {
+        Linking.openURL(`tel:${props.business.phone}`)
+    }
+
+    const getDirections = () => {
+        let address = props.business.location.address1.replace(/\s+/g, '+').toLowerCase()
+        Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${address}`)
     }
 
     return (
@@ -41,24 +50,20 @@ export default Card = props => {
             <View style={styles.cardContent} >
                 <TouchableOpacity onPress={() => Actions.show({...props})}>
                     <View style={styles.top}>
-                        <Text style={{fontWeight: 'bold'}}>{props.business.name}</Text>
+                        <Text style={{fontWeight: 'bold', textAlign: 'center'}}>{props.business.name}</Text>
+                        <Text style={styles.price}>{props.business.price}</Text>
+                        {displayTransaction()}
                         {displayRating()}
                     </View>
-                    <Image source={props.business.image_url ? {uri: props.business.image_url} : null} style={styles.picture}/>
+                    <Image source={props.business.image_url ? {uri: props.business.image_url} : require('../assets/noImg.png')} style={styles.picture}/>
                 </TouchableOpacity>
                 <View style={styles.bottom}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={() => getDirections()}>
                         <Text style={styles.buttonText}>{props.business.location.display_address[0]}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>{props.business.display_phone}</Text>
+                        <Text style={styles.buttonText} onPress={() => makeCall()}>{props.business.display_phone}</Text>
                     </TouchableOpacity>
-                </View>
-                <View style={styles.bottomFirst}>
-                    <Text>Reviews: {props.business.review_count}</Text>
-                    <Text>{props.business.is_closed === false ? 'OPEN':'CLOSED'}</Text>
-                    <Text style={styles.price}>{props.business.price}</Text>
-                    {displayTransaction()}
                 </View>
             </View>
         </View>
@@ -80,7 +85,7 @@ const styles = StyleSheet.create({
     },
     picture: {
         width: '100%',
-        height: 250,
+        height: 325,
         resizeMode: 'cover'
     },
     top: {
@@ -89,21 +94,17 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 8
     },
-    bottomFirst: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 8
-    },
     bottom: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        borderBottomLeftRadius: 5,
+        borderBottomRightRadius: 5
 
     },
     button: {
         backgroundColor: 'tomato',
         padding: 8,
-        width: '50%',
+        width: '50%'
     },
     buttonText: {
         color: 'white',
